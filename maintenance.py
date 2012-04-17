@@ -6,12 +6,11 @@ from . import utils
 
 @task
 @utils.inside_project
-def install_req(force=False, update=False):
+def install_req(update=False):
     """Install python requirements with pip"""
-    if force or utils.path_changed('requirements.txt'):
-        cmd = run if 'virtualenv_dir' in env else sudo
-        cmd('pip install {update} -r requirements.txt'
-            .format(update='-U' if update else '', **env))
+    cmd = run if 'virtualenv_dir' in env else sudo
+    cmd('pip install {update} -r requirements.txt'
+        .format(update='-U' if update else '', **env))
 
 @task
 @utils.inside_project

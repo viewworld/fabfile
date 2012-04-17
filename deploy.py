@@ -28,14 +28,14 @@ def rollback(**kwargs):
     notify_flowdock(rollback=True)
 
 def should_run_task(task, on_change=None):
-    tasks = env.app.get('post_deploy_tasks', {})
-    roles = None
-    if ':' in task:
-        roles, task = task.split(':', 1)
-        roles = roles.split(',')
+    tasks = {}
+    for t in env.app.get('post_deploy_tasks', []):
+        roles, sep, t = t.rpartition(':')
+        roles = roles.split(',') if roles else []
+        tasks[t] = roles
     if task not in tasks:
         return False
-    if roles and not any(env.host_string in env.roledefs[role] for role in roles):
+    if tasks[task] and not any(env.host_string in env.roledefs[role] for role in tasks[task]):
         return False
     if on_change and not utils.path_changed(on_change):
         return False
@@ -43,7 +43,7 @@ def should_run_task(task, on_change=None):
 
 def post_deploy(fake_migration=False, ignore_docs=False):
     tasks = env.app.get('post_deploy_tasks', {})
-    if should_run_task('install_req'):
+    if should_run_task('install_req', on_change='requirements.txt'):
         maintenance.install_req()
     if should_run_task('syncdb'):
         django.syncdb()
