@@ -53,6 +53,8 @@ def post_deploy(fake_migration=False, ignore_docs=False):
         django.compile_messages()
     if should_run_task('gen_jsdoc', on_change='viewworld/static/js'):
         maintenance.gen_jsdoc()
+    if should_run_task('ant_store', on_change='xqueries'):
+        maintenance.ant_store()
     if should_run_task('reload_gunicorn'):
         run('/etc/init.d/gunicorn-{0} reload'.format(env.app['name']))
     if should_run_task('restart_celery'):
