@@ -5,7 +5,7 @@ from . import deploy
 from . import maintenance as maint
 from . import django
 
-from . import app
+import app
 
 env.use_ssh_config = True
 env.app = app.APP
