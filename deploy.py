@@ -51,6 +51,8 @@ def post_deploy(fake_migration=False, ignore_docs=False):
         django.migrate(fake=fake_migration)
     if should_run_task('compile_messages'):
         django.compile_messages()
+    if should_run_task('collectstatic'):
+        django.manage('collectstatic --noinput')
     if should_run_task('gen_jsdoc', on_change='viewworld/static/js'):
         maintenance.gen_jsdoc()
     if should_run_task('ant_store', on_change='xqueries'):
